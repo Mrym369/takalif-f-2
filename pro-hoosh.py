@@ -1,5 +1,5 @@
 """
-عامل واکنشی ساده برای مسئله سوئیچ نور در محیط 2*2
+عامل واکنشی ساده برای مسئله سوئیچ نور در محیط 4*4
 هدف: خاموش کردن همه چراغ‌ها
 معماری: Condition-Action Rules (فقط بر اساس percept فعلی)
 """
@@ -15,8 +15,8 @@ Percept = Tuple[Pos, bool]          # (موقعیت عامل، آیا چراغ �
 # 1) محیط (Environment)
 # =================================================================
 class LightEnvironment:
-    """محیط 2*2 با چراغ‌هایی که می‌توانند روشن/خاموش باشند."""
-    SIZE = 2
+    """محیط 4*4 با چراغ‌هایی که می‌توانند روشن/خاموش باشند."""
+    SIZE = 4
     MOVES = {"UP": (-1, 0), "DOWN": (1, 0), "LEFT": (0, -1), "RIGHT": (0, 1)}
 
     def __init__(self, initial: list = None, agent_pos: Pos = (0, 0)):
@@ -73,20 +73,35 @@ class SimpleReflexAgent:
       R3: IF محیط گفت همه چراغ‌ها خاموش‌اند  -> NOOP
     """
 
-    # مسیر ثابت مارپیچی: هر خانه دقیقاً یک بار بازدید می‌شود
-    PATH = [(0, 0), (0, 1), (1, 1), (1, 0)]
-
-    # از هر خانه، برای رسیدن به خانه بعدی مسیر، چه حرکتی لازم است؟
-    # (این نقشه جزئی از قواعد عامل است؛ محیط کامل قابل مشاهده فرض شده)
-    NEXT_MOVE = {
-        (0, 0): "RIGHT",
-        (0, 1): "DOWN",
-        (1, 1): "LEFT",
-        (1, 0): "UP",
-    }
-
-    def __init__(self):
+    def __init__(self, size: int = 4):
+        self.size = size
         self.rules_fired = 0          # فقط برای گزارش
+        # مسیر ثابت "مارپیچ ماری" (snake): هر خانه دقیقاً یک بار بازدید می‌شود
+        self.PATH = self._build_snake_path()
+        # از هر خانه، برای رسیدن به خانه بعدی مسیر، چه حرکتی لازم است؟
+        self.NEXT_MOVE = self._build_next_move()
+
+    def _build_snake_path(self):
+        """مسیر ماری‌شکل: سطر زوج چپ→راست، سطر فرد راست→چپ."""
+        path = []
+        for r in range(self.size):
+            cols = range(self.size) if r % 2 == 0 else range(self.size - 1, -1, -1)
+            path.extend((r, c) for c in cols)
+        return path
+
+    def _build_next_move(self):
+        """نگاشت هر خانه به حرکتی که به خانه بعدی مسیر می‌رساند."""
+        moves = {}
+        for (r1, c1), (r2, c2) in zip(self.PATH, self.PATH[1:]):
+            if r2 > r1:
+                moves[(r1, c1)] = "DOWN"
+            elif r2 < r1:
+                moves[(r1, c1)] = "UP"
+            elif c2 > c1:
+                moves[(r1, c1)] = "RIGHT"
+            else:
+                moves[(r1, c1)] = "LEFT"
+        return moves
 
     def act(self, percept: Percept, goal: bool = False) -> str:
         pos, light_on = percept
@@ -125,22 +140,23 @@ class StatefulReflexAgent(SimpleReflexAgent):
         self.visited.add(pos)
 
         if light_on:
-            return "TOGGLE"                                   # R1
-        if len(self.visited) == 4 and pos == self.PATH[-1]:   # همه خانه‌ها یک بار بازدید شدند
-            return "NOOP"                                     # R3: خودش پایان را تشخیص می‌دهد
-        return self.NEXT_MOVE[pos]                            # R2
+            return "TOGGLE"                                        # R1
+        # همه خانه‌ها یک بار بازدید شدند و به آخرین خانه مسیر رسیده‌ایم
+        if len(self.visited) == self.size ** 2 and pos == self.PATH[-1]:
+            return "NOOP"                                          # R3
+        return self.NEXT_MOVE[pos]                                 # R2
 
 
 # =================================================================
 # 4) حلقه اجرا
 # =================================================================
-def run(initial: list = None, max_steps: int = 12, agent=None) -> None:
+def run(initial: list = None, max_steps: int = 64, agent=None) -> None:
     env = LightEnvironment(initial=initial)
     if agent is None:
-        agent = SimpleReflexAgent()
+        agent = SimpleReflexAgent(size=env.SIZE)
 
     print("=" * 46)
-    print("حالت اولیه محیط 2*2:")
+    print(f"حالت اولیه محیط {env.SIZE}*{env.SIZE}:")
     env.show()
     print("=" * 46)
 
