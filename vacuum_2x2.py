@@ -3,7 +3,6 @@
 هدف: تمیز کردن همه خانه‌های کثیف
 معماری: Condition-Action Rules (فقط بر اساس percept فعلی)
 """
-# دیمه کار سختکوش
 
 import random
 from typing import Tuple
