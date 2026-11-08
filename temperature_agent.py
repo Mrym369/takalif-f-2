@@ -200,12 +200,6 @@ def run(initial: List[float] = None, max_steps: int = 20, agent=None) -> None:
 
 
 if __name__ == "__main__":
-    import sys
-
-    # خروجی UTF-8 (برای نمایش درست متن فارسی در کنسول ویندوز)
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
-
     # دمای اولیه: خانه1=17 ، خانه2=24 (طبق تمرین)
     run(initial=[17.0, 24.0])
 

@@ -10,12 +10,7 @@
 ۵) تکرار تا تمیز شدن همهٔ خانه‌ها → توقف
 """
 
-import sys
 from collections import deque
-
-# کنسول ویندوز ممکن است UTF-8 نباشد (خطای UnicodeEncodeError)
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8")
 
 # --- تعریف محیط ۲×۲ ---
 # سلول‌ها: (row, col) با row, col ∈ {0,1}

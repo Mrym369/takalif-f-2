@@ -178,12 +178,6 @@ def run(initial: list = None, max_steps: int = 64, agent=None) -> None:
 
 
 if __name__ == "__main__":
-    import sys
-
-    # خروجی UTF-8 (برای نمایش درست متن فارسی در کنسول ویندوز)
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
-
     # برای نتیجه قابل تکرار می‌توانید initial را خودتان تعیین کنید،
     # مثلاً: initial = [[True, False], [True, True]]
     random.seed(4)

@@ -105,10 +105,4 @@ def run(initial=(17.0, 24.0)):
 
 
 if __name__ == "__main__":
-    import sys
-
-    # خروجی UTF-8 (برای نمایش درست متن فارسی در کنسول ویندوز)
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
-
     run(initial=(17.0, 24.0))
